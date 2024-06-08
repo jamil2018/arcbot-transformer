@@ -1,4 +1,3 @@
-// app/components/ThemeSwitcher.tsx
 "use client";
 
 import { useTheme } from "next-themes";
@@ -8,8 +7,6 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Avatar,
-  User,
   Button,
 } from "@nextui-org/react";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -47,7 +44,11 @@ export function ThemeSwitcher() {
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="light" onClick={() => setTheme("light")}>
+            <DropdownItem
+              key="light"
+              className="gap-2"
+              onClick={() => setTheme("light")}
+            >
               <LightModeIcon className="mr-2" />
               <span>Light</span>
             </DropdownItem>
