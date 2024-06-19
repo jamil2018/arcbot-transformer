@@ -1,7 +1,10 @@
-import DataTable from "@/components/DataTable";
+const DataTable = dynamic(() => import("@/components/DataTable"), {
+  ssr: false,
+});
 import PageHeader from "@/components/PageHeader";
 import { TableColumn } from "@/types/TableColumn";
 import { LocatorTableRow } from "@/types/tableRows/LocatorTableRow";
+import dynamic from "next/dynamic";
 
 const rows: LocatorTableRow[] = [
   {
