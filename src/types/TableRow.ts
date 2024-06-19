@@ -1,3 +1,3 @@
 export interface TableRow {
-  key: string;
+  [key: string]: any;
 }

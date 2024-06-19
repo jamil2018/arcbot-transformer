@@ -10,11 +10,11 @@ export const routes: Route[] = [
     path: "/templates",
   },
   {
-    name: "Locators",
-    path: "/locators",
-  },
-  {
     name: "Steps",
     path: "/steps",
+  },
+  {
+    name: "Locators",
+    path: "/locators",
   },
 ];

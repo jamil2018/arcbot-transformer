@@ -13,8 +13,9 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.19",
     "@mui/material": "^5.15.19",
-    "@nextui-org/react": "^2.4.1",
-    "@prisma/client": "^5.15.0",
+    "@nextui-org/react": "^2.4.2",
+    "@prisma/client": "^5.15.1",
+    "@react-stately/data": "^3.11.4",
     "framer-motion": "^11.2.10",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
@@ -28,7 +29,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
-    "prisma": "^5.15.0",
+    "prisma": "^5.15.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
