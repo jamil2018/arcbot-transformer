@@ -17,6 +17,8 @@ import {
   Pagination,
   Selection,
   SortDescriptor,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TableColumn as Column } from "@/types/TableColumn";
 import { LocatorTableRow as Row } from "@/types/tableRows/LocatorTableRow";
@@ -34,7 +36,7 @@ export default function DataTable({
   showRowCrudActions?: boolean;
 }) {
   showRowCrudActions && !columns.find((column) => column.key === "actions")
-    ? columns.push({ key: "actions", label: "Actions" })
+    ? columns.push({ key: "actions", label: "ACTIONS" })
     : null;
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
@@ -196,21 +198,27 @@ export default function DataTable({
             </Button>
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-start">
           <span className="text-default-400 text-small">
             Total {rows.length} items
           </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
+          <Select
+            variant="bordered"
+            onChange={onRowsPerPageChange}
+            label="Rows per page"
+            className="max-w-40"
+            defaultSelectedKeys="5"
+          >
+            <SelectItem key="5" value="5">
+              5
+            </SelectItem>
+            <SelectItem key="10" value="10">
+              10
+            </SelectItem>
+            <SelectItem key="15" value="15">
+              15
+            </SelectItem>
+          </Select>
         </div>
       </div>
     );

@@ -16,7 +16,9 @@ datasource db {
 model Locator {
   id     Int    @id @default(autoincrement())
   name   String @unique
-  module String @unique
+  module String
   value  String
-  file   String @unique
+  file   String
+
+  @@unique([name, file])
 }
