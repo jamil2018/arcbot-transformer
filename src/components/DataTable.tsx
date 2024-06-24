@@ -272,7 +272,7 @@ export default function DataTable({
 
   return (
     <Table
-      aria-label="Example table with custom cells, pagination and sorting"
+      aria-label="DataTable"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
