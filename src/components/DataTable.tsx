@@ -22,18 +22,20 @@ import {
 } from "@nextui-org/react";
 import { TableColumn as Column } from "@/types/TableColumn";
 import { LocatorTableRow as Row } from "@/types/tableRows/LocatorTableRow";
-import { Add, ExpandMore, MoreVert, Search } from "@mui/icons-material";
+import { ExpandMore, MoreVert, Search } from "@mui/icons-material";
 
 export default function DataTable({
   columns,
   rows,
   searchKey,
   showRowCrudActions = false,
+  entityCreator,
 }: {
   columns: Column[];
   rows: Row[];
   searchKey: string;
   showRowCrudActions?: boolean;
+  entityCreator: React.ReactNode;
 }) {
   showRowCrudActions && !columns.find((column) => column.key === "actions")
     ? columns.push({ key: "actions", label: "ACTIONS" })
@@ -193,9 +195,7 @@ export default function DataTable({
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<Add />}>
-              Add New
-            </Button>
+            {entityCreator}
           </div>
         </div>
         <div className="flex justify-between items-start">
