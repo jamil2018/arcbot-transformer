@@ -1,6 +1,6 @@
 "use client";
 
-import FieldInfo from "@/components/FieldInfo";
+import { createLocator } from "@/actions/locators";
 import { Add } from "@mui/icons-material";
 import {
   Button,
@@ -26,15 +26,8 @@ export default function CreateLocator() {
     },
     onSubmit: async ({ value }) => {
       try {
-        const res = await fetch("/api/locators", {
-          method: "POST",
-          body: JSON.stringify(value),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (res.status === 200) {
+        const res = await createLocator(value);
+        if (res.success) {
           onClose();
         }
       } catch (error) {
@@ -200,7 +193,11 @@ export default function CreateLocator() {
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([canSubmit, isSubmitting]) => (
-                      <Button type="submit" disabled={!canSubmit}>
+                      <Button
+                        type="submit"
+                        color="primary"
+                        disabled={!canSubmit}
+                      >
                         {isSubmitting ? "..." : "Submit"}
                       </Button>
                     )}

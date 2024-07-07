@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -19,6 +19,12 @@ import {
   SortDescriptor,
   Select,
   SelectItem,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@nextui-org/react";
 import { TableColumn as Column } from "@/types/TableColumn";
 import { LocatorTableRow as Row } from "@/types/tableRows/LocatorTableRow";
@@ -30,16 +36,19 @@ export default function DataTable({
   searchKey,
   showRowCrudActions = false,
   entityCreator,
+  deleteHandler,
 }: {
   columns: Column[];
   rows: Row[];
   searchKey: string;
   showRowCrudActions?: boolean;
   entityCreator: React.ReactNode;
+  deleteHandler: (id: number) => void;
 }) {
   showRowCrudActions && !columns.find((column) => column.key === "actions")
     ? columns.push({ key: "actions", label: "ACTIONS" })
     : null;
+  const [selectedKey, setSelectedKey] = React.useState(0);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
@@ -54,6 +63,7 @@ export default function DataTable({
   });
 
   const [page, setPage] = React.useState(1);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -112,7 +122,14 @@ export default function DataTable({
               <DropdownMenu>
                 <DropdownItem>View</DropdownItem>
                 <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem
+                  onPress={() => {
+                    setSelectedKey(row.id);
+                    onOpen();
+                  }}
+                >
+                  Delete
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -271,43 +288,72 @@ export default function DataTable({
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
   return (
-    <Table
-      aria-label="DataTable"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[500px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.key}
-            align={column.key === "actions" ? "center" : "start"}
-            allowsSorting={column.key === "actions" ? false : true}
-            style={{ width: 100 / columns.length + "%" }}
-          >
-            {column.label}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id} style={{ width: 100 / columns.length + "%" }}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            Delete Locator
+          </ModalHeader>
+          <ModalBody className="flex justify-between">
+            <h2 className="text-xs">
+              Are you sure you want to delete the entity(s)?
+            </h2>
+          </ModalBody>
+          <ModalFooter>
+            <Button onPress={onClose}>Cancel</Button>
+            <Button
+              onClick={() => {
+                deleteHandler(selectedKey);
+                onClose();
+              }}
+              color="danger"
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Table
+        aria-label="DataTable"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[500px]",
+        }}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.key}
+              align={column.key === "actions" ? "center" : "start"}
+              allowsSorting={column.key === "actions" ? false : true}
+              style={{ width: 100 / columns.length + "%" }}
+            >
+              {column.label}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No records found"} items={sortedItems}>
+          {(item) => (
+            <TableRow
+              key={item.id}
+              style={{ width: 100 / columns.length + "%" }}
+            >
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 }

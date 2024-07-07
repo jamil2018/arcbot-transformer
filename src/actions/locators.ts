@@ -1,0 +1,57 @@
+"use server";
+
+import prisma from "@/config/dbConfig";
+import { revalidatePath } from "next/cache";
+
+export interface Locator {
+  name: string;
+  module: string;
+  value: string;
+  file: string;
+}
+
+export async function getAllLocators() {
+  try {
+    const res = await prisma.locator.findMany();
+    return res;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Error processing request";
+    return {
+      message: "Error processing request",
+      error: errorMessage,
+    };
+  }
+}
+
+export async function createLocator(locator: Locator) {
+  try {
+    const res = await prisma.locator.create({ data: locator });
+    revalidatePath("/locators");
+    return { success: true, data: res };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Error processing request";
+    return {
+      success: false,
+      message: "Error processing request",
+      error: errorMessage,
+    };
+  }
+}
+
+export async function deleteLocator(id: number) {
+  try {
+    const res = await prisma.locator.delete({ where: { id } });
+    revalidatePath("/locators");
+    return { success: true, data: res };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Error processing request";
+    return {
+      success: false,
+      message: "Error processing request",
+      error: errorMessage,
+    };
+  }
+}

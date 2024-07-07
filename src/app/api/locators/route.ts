@@ -11,11 +11,23 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const res = await prisma.locator.create({ data: body });
     return NextResponse.json({ message: "Data added", data: res });
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: "Error processing request", error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { id } = await request.json();
+    const res = await prisma.locator.delete({ where: { id } });
   } catch (error: any) {
     return NextResponse.json(
       { message: "Error processing request", error: error.message },

@@ -4,16 +4,15 @@ const DataTable = dynamic(() => import("@/components/DataTable"), {
 import PageHeader from "@/components/PageHeader";
 import { LocatorTableRow } from "@/types/tableRows/LocatorTableRow";
 import dynamic from "next/dynamic";
-import { GET } from "../api/locators/route";
 import { locatorTableColumns } from "@/constants/tables/locatorTable";
 import { formatTableRows } from "@/utils/tableDataFormatter";
 import CreateLocator from "./createLocator";
+import { deleteLocator, getAllLocators } from "@/actions/locators";
 
 export default async function Locators() {
-  const response = await GET();
-  const rowData = (await response?.json()) as LocatorTableRow[];
+  const response = await getAllLocators();
+  const rowData = response as LocatorTableRow[];
   const LocatorDataRows: LocatorTableRow[] = formatTableRows(rowData);
-
   return (
     <div>
       <PageHeader
@@ -26,6 +25,7 @@ export default async function Locators() {
         searchKey="name"
         showRowCrudActions={true}
         entityCreator={<CreateLocator />}
+        deleteHandler={deleteLocator}
       />
     </div>
   );
