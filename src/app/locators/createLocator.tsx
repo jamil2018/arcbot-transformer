@@ -19,6 +19,7 @@ import { z } from "zod";
 
 export default function CreateLocator() {
   const [showServerError, setShowServerError] = useState(false);
+  const [serverErrorMessage, setServerErrorMessage] = useState("");
   const form = useForm({
     defaultValues: {
       name: "",
@@ -30,11 +31,12 @@ export default function CreateLocator() {
       try {
         const res = await createLocator(value);
         if (!res.success) {
-          console.error(res.error);
+          setServerErrorMessage(res.message ? res.message : "Unknown error!!!");
           setShowServerError(true);
         }
         if (res.success) {
           onClose();
+          setServerErrorMessage("");
           setShowServerError(false);
         }
       } catch (error) {
@@ -75,10 +77,7 @@ export default function CreateLocator() {
                         : "bg-danger-300 text-slate-300 p-4 rounded-lg hidden"
                     }
                   >
-                    <p className="text-sm">
-                      Please ensure that locator and module name combination is
-                      unique.
-                    </p>
+                    <p className="text-sm">{serverErrorMessage}</p>
                   </div>
                   <form.Field
                     name="name"

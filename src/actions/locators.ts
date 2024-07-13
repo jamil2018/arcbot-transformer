@@ -17,6 +17,7 @@ export async function getAllLocators() {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Error processing request";
+    console.error(errorMessage);
     return {
       message: "Error processing request",
       error: errorMessage,
@@ -32,6 +33,13 @@ export async function createLocator(locator: Locator) {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Error processing request";
+    if (errorMessage.includes("Unique constraint failed on the fields:")) {
+      return {
+        success: false,
+        message: "Locator already exists",
+        error: errorMessage,
+      };
+    }
     return {
       success: false,
       message: "Error processing request",
