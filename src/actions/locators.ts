@@ -55,3 +55,19 @@ export async function deleteLocator(id: number) {
     };
   }
 }
+
+export async function deleteMultipleLocator(id: number[]) {
+  try {
+    const res = await prisma.locator.deleteMany({ where: { id: { in: id } } });
+    revalidatePath("/locators");
+    return { success: true, data: res };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Error processing request";
+    return {
+      success: false,
+      message: "Error processing request",
+      error: errorMessage,
+    };
+  }
+}

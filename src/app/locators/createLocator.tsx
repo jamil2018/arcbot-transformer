@@ -14,9 +14,11 @@ import {
 } from "@nextui-org/react";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
+import { useState } from "react";
 import { z } from "zod";
 
 export default function CreateLocator() {
+  const [showServerError, setShowServerError] = useState(false);
   const form = useForm({
     defaultValues: {
       name: "",
@@ -27,8 +29,13 @@ export default function CreateLocator() {
     onSubmit: async ({ value }) => {
       try {
         const res = await createLocator(value);
+        if (!res.success) {
+          console.error(res.error);
+          setShowServerError(true);
+        }
         if (res.success) {
           onClose();
+          setShowServerError(false);
         }
       } catch (error) {
         console.error(error);
@@ -37,9 +44,13 @@ export default function CreateLocator() {
     validatorAdapter: zodValidator(),
   });
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const handleModalOpen = () => {
+    onOpen();
+    setShowServerError(false);
+  };
   return (
     <>
-      <Button onPress={onOpen} color="primary" endContent={<Add />}>
+      <Button onPress={handleModalOpen} color="primary" endContent={<Add />}>
         Create Locator
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -57,6 +68,18 @@ export default function CreateLocator() {
                   Create Locator
                 </ModalHeader>
                 <ModalBody>
+                  <div
+                    className={
+                      showServerError
+                        ? "bg-danger-300 text-slate-300 p-4 rounded-lg"
+                        : "bg-danger-300 text-slate-300 p-4 rounded-lg hidden"
+                    }
+                  >
+                    <p className="text-sm">
+                      Please ensure that locator and module name combination is
+                      unique.
+                    </p>
+                  </div>
                   <form.Field
                     name="name"
                     validators={{
