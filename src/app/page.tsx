@@ -1,4 +1,3 @@
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Button } from "@nextui-org/react";
 
 export default function Home() {

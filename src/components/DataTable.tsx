@@ -65,6 +65,7 @@ export default function DataTable({
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
+
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(columns.map((column) => column.key))
   );
@@ -279,7 +280,7 @@ export default function DataTable({
               isIconOnly={true}
               color="danger"
               variant="ghost"
-              onPress={() => onMultiDeleteOpen()}
+              onPress={onMultiDeleteOpen}
             >
               <DeleteOutline />
             </Button>
@@ -397,9 +398,10 @@ export default function DataTable({
             <Button onPress={onMultiDeleteClose}>Cancel</Button>
             <Button
               onClick={() => {
-                const selectedIds = Array.from(selectedKeys).map((key) =>
-                  Number(key.toLocaleString())
-                );
+                const selectedIds =
+                  selectedKeys === "all"
+                    ? rows.map((r) => Number(r.id.toString()))
+                    : Array.from(selectedKeys).map((i) => Number(i));
                 multiDeleteHandler(selectedIds);
                 onMultiDeleteClose();
               }}

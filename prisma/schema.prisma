@@ -14,11 +14,18 @@ datasource db {
 }
 
 model Locator {
-  id     Int    @id @default(autoincrement())
-  name   String @unique
-  module String
-  value  String
-  file   String
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  value    String
+  file     String
+  module   Module? @relation(fields: [moduleId], references: [id])
+  moduleId Int?
 
   @@unique([name, file])
+}
+
+model Module {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  locators Locator[]
 }

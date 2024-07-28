@@ -12,7 +12,6 @@ import {
   deleteMultipleLocator,
   getAllLocators,
 } from "@/actions/locators";
-import EditLocator from "./editLocator";
 
 export default async function Locators() {
   const response = await getAllLocators();

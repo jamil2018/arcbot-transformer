@@ -17,4 +17,8 @@ export const routes: Route[] = [
     name: "Locators",
     path: "/locators",
   },
+  {
+    name: "Modules",
+    path: "/modules",
+  },
 ];
