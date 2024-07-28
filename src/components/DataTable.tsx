@@ -29,6 +29,8 @@ import {
 import { TableColumn as Column } from "@/types/TableColumn";
 import { LocatorTableRow as Row } from "@/types/tableRows/LocatorTableRow";
 import { ExpandMore, MoreVert, Search } from "@mui/icons-material";
+import { EntityList } from "@/types/EntityList";
+import EditLocator from "@/app/locators/editLocator";
 
 export default function DataTable({
   columns,
@@ -36,14 +38,18 @@ export default function DataTable({
   searchKey,
   showRowCrudActions = false,
   entityCreator,
+  currentEntity,
   deleteHandler,
+  multiDeleteHandler,
 }: {
   columns: Column[];
   rows: Row[];
   searchKey: string;
   showRowCrudActions?: boolean;
   entityCreator: React.ReactNode;
+  currentEntity: EntityList;
   deleteHandler: (id: number) => void;
+  multiDeleteHandler: (ids: number[]) => void;
 }) {
   showRowCrudActions && !columns.find((column) => column.key === "actions")
     ? columns.push({ key: "actions", label: "ACTIONS" })
@@ -63,7 +69,18 @@ export default function DataTable({
   });
 
   const [page, setPage] = React.useState(1);
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onOpenChange: onDeleteOpenChange,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -106,6 +123,32 @@ export default function DataTable({
     });
   }, [sortDescriptor, items]);
 
+  const renderEditEntity = React.useCallback(
+    (currentEntity: EntityList) => {
+      switch (currentEntity) {
+        case "locators":
+          const locatorData = rows.find((row) => row.id === selectedKey);
+          return locatorData ? (
+            <EditLocator
+              locatorData={{
+                id: locatorData.id,
+                name: locatorData.name,
+                module: locatorData.module,
+                value: locatorData.value,
+                file: locatorData.file,
+              }}
+              modalCloseHandler={onEditClose}
+            />
+          ) : null;
+        default:
+          return (
+            <span>Edit form could not be loaded due to unknown error!!!</span>
+          );
+      }
+    },
+    [currentEntity, selectedKey, rows]
+  );
+
   const renderCell = React.useCallback((row: Row, columnKey: React.Key) => {
     const cellValue = row[columnKey as keyof Row];
 
@@ -120,12 +163,18 @@ export default function DataTable({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
                 <DropdownItem
                   onPress={() => {
                     setSelectedKey(row.id);
-                    onOpen();
+                    onEditOpen();
+                  }}
+                >
+                  Edit
+                </DropdownItem>
+                <DropdownItem
+                  onPress={() => {
+                    setSelectedKey(row.id);
+                    onDeleteOpen();
                   }}
                 >
                   Delete
@@ -289,7 +338,7 @@ export default function DataTable({
 
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isDeleteOpen} onOpenChange={onDeleteOpenChange}>
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
             Delete Locator
@@ -300,11 +349,11 @@ export default function DataTable({
             </h2>
           </ModalBody>
           <ModalFooter>
-            <Button onPress={onClose}>Cancel</Button>
+            <Button onPress={onDeleteClose}>Cancel</Button>
             <Button
               onClick={() => {
                 deleteHandler(selectedKey);
-                onClose();
+                onDeleteClose();
               }}
               color="danger"
             >
@@ -312,6 +361,9 @@ export default function DataTable({
             </Button>
           </ModalFooter>
         </ModalContent>
+      </Modal>
+      <Modal isOpen={isEditOpen} onOpenChange={onEditClose}>
+        {renderEditEntity(currentEntity)}
       </Modal>
       <Table
         aria-label="DataTable"

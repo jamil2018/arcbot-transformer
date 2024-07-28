@@ -7,7 +7,12 @@ import dynamic from "next/dynamic";
 import { locatorTableColumns } from "@/constants/tables/locatorTable";
 import { formatTableRows } from "@/utils/tableDataFormatter";
 import CreateLocator from "./createLocator";
-import { deleteLocator, getAllLocators } from "@/actions/locators";
+import {
+  deleteLocator,
+  deleteMultipleLocator,
+  getAllLocators,
+} from "@/actions/locators";
+import EditLocator from "./editLocator";
 
 export default async function Locators() {
   const response = await getAllLocators();
@@ -26,6 +31,8 @@ export default async function Locators() {
         showRowCrudActions={true}
         entityCreator={<CreateLocator />}
         deleteHandler={deleteLocator}
+        multiDeleteHandler={deleteMultipleLocator}
+        currentEntity="locators"
       />
     </div>
   );

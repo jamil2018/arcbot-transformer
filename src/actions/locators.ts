@@ -79,3 +79,33 @@ export async function deleteMultipleLocator(id: number[]) {
     };
   }
 }
+
+export async function getLocatorById(id: number) {
+  try {
+    const res = await prisma.locator.findUnique({ where: { id } });
+    return res;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Error processing request";
+    return {
+      message: "Error processing request",
+      error: errorMessage,
+    };
+  }
+}
+
+export async function updateLocator(id: number, locator: Locator) {
+  try {
+    const res = await prisma.locator.update({ where: { id }, data: locator });
+    revalidatePath("/locators");
+    return { success: true, data: res };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Error processing request";
+    return {
+      success: false,
+      message: "Error processing request",
+      error: errorMessage,
+    };
+  }
+}
