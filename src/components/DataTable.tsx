@@ -28,7 +28,13 @@ import {
 } from "@nextui-org/react";
 import { TableColumn as Column } from "@/types/TableColumn";
 import { LocatorTableRow as Row } from "@/types/tableRows/LocatorTableRow";
-import { ExpandMore, MoreVert, Search } from "@mui/icons-material";
+import {
+  Delete,
+  DeleteOutline,
+  ExpandMore,
+  MoreVert,
+  Search,
+} from "@mui/icons-material";
 import { EntityList } from "@/types/EntityList";
 import EditLocator from "@/app/locators/editLocator";
 
@@ -80,6 +86,13 @@ export default function DataTable({
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isMultiDeleteOpen,
+    onOpen: onMultiDeleteOpen,
+    onOpenChange: onMultiDeleteOpenChange,
+    onClose: onMultiDeleteClose,
   } = useDisclosure();
 
   const hasSearchFilter = Boolean(filterValue);
@@ -262,6 +275,14 @@ export default function DataTable({
               </DropdownMenu>
             </Dropdown>
             {entityCreator}
+            <Button
+              isIconOnly={true}
+              color="danger"
+              variant="ghost"
+              onPress={() => onMultiDeleteOpen()}
+            >
+              <DeleteOutline />
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-start">
@@ -354,6 +375,33 @@ export default function DataTable({
               onClick={() => {
                 deleteHandler(selectedKey);
                 onDeleteClose();
+              }}
+              color="danger"
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isMultiDeleteOpen} onOpenChange={onMultiDeleteOpenChange}>
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            Delete Locator
+          </ModalHeader>
+          <ModalBody className="flex justify-between">
+            <h2 className="text-xs">
+              Are you sure you want to delete the entity(s)?
+            </h2>
+          </ModalBody>
+          <ModalFooter>
+            <Button onPress={onMultiDeleteClose}>Cancel</Button>
+            <Button
+              onClick={() => {
+                const selectedIds = Array.from(selectedKeys).map((key) =>
+                  Number(key.toLocaleString())
+                );
+                multiDeleteHandler(selectedIds);
+                onMultiDeleteClose();
               }}
               color="danger"
             >

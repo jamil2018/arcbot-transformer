@@ -1,7 +1,7 @@
 "use client";
 
 import { createLocator } from "@/actions/locators";
-import { Add } from "@mui/icons-material";
+import { Add, AddCircleOutline } from "@mui/icons-material";
 import {
   Button,
   Input,
@@ -52,8 +52,13 @@ export default function CreateLocator() {
   };
   return (
     <>
-      <Button onPress={handleModalOpen} color="primary" endContent={<Add />}>
-        Create Locator
+      <Button
+        onPress={handleModalOpen}
+        color="success"
+        isIconOnly={true}
+        variant="ghost"
+      >
+        <AddCircleOutline />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <form
